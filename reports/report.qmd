@@ -339,7 +339,8 @@ WHERE
 run_sql_and_return_html(cnx,"""
 select
   `Short Name`,
-  `Income Group`
+  `Income Group`,
+  `Region`
 from
     sp25_singhj21_user.wdi_country
 where
@@ -425,9 +426,9 @@ select
 from
   sp25_singhj21_user.wdi_country
 where
-  `Income Group` = 'Low income'
+  `Income Group` = 'Lower middle income'
 group by
-  `Region`, `Income Group`
+  `Region`
 order by
   "Low Income Countries" desc
 limit 1
