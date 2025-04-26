@@ -390,7 +390,6 @@ select
   sum(case when `Income Group` = 'Upper middle income' then 1 else 0 end) as "Upper Middle",
   sum(case when `Income Group` = 'Lower middle income' then 1 else 0 end) as "Lower Middle",
   sum(case when `Income Group` = 'Low income' then 1 else 0 end) as "Low",
-  sum(case when (`Income Group` not in ('High income','Upper middle income','Lower middle income','Low income') or `Income Group` is null) then 1 else 0 end) as "Other",
   sum(
     case when `Income Group` in ('High income', 'Upper middle income', 'Lower middle income', 'Low income') 
     or (`Income Group` not in ('High income','Upper middle income','Lower middle income','Low income') and `Income Group` is not null)
@@ -639,17 +638,7 @@ select
   (select total_countries from total_count) as "Total Countries"
 from
   income_counts
-
-union all
-
-select
-  'Total' as income_group,
-  (select sum(num_countries) from income_counts),
-  100.0,
-  (select sum(num_countries) from income_counts)
-
 order by
-  case when income_group = 'Total' then 1 else 0 end,
   "Number of Countries" desc
 """)
 
