@@ -132,9 +132,7 @@ drop table if exists skills;
 # create table
 execute_ddl(cnx,"""
 CREATE TABLE sp25_singhj21_user.wdi_country AS
-SELECT 
-  *
-FROM
+SELECT * FROM
   world_bank_data.wdi_country
 WHERE
   not Region is NULL;
@@ -612,17 +610,30 @@ ORDER BY
 
 ## (This is much simpler than task 20!)
 
-run_sql_and_return_html(cnx,"""
+run_sql_and_return_html(cnx, """
+with income_counts as (
+  select
+    `Income Group` as income_group,
+    count(*) as num_countries
+  from
+    sp25_singhj21_user.wdi_country
+  group by
+    `Income Group`
+),
+total_count as (
+  select sum(num_countries) as total_countries
+  from income_counts
+)
 select
-  `Income Group`,
-  count(*) as "Number of Countries"
+  income_group,
+  num_countries as "Number of Countries",
+  round(num_countries * 100.0 / (select total_countries from total_count), 1) as "Percentage"
 from
-  sp25_singhj21_user.wdi_country
-group by
-  `Income Group`
+  income_counts
 order by
   "Number of Countries" desc
 """)
+
 ```
 
 
