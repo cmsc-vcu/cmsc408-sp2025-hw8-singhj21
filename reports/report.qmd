@@ -399,7 +399,9 @@ select
 from
   sp25_singhj21_user.wdi_country
 where
-  `Region` is not null and `Region` <> ''
+  `Region` is not null
+  and `Region` <> ''
+  and `Region` <> 'North America'
 group by
   `Region`
 order by
@@ -633,7 +635,8 @@ total_count as (
 select
   income_group,
   num_countries as "Number of Countries",
-  round(num_countries * 100.0 / (select total_countries from total_count), 1) as "Percentage"
+  round(num_countries * 100.0 / (select total_countries from total_count), 1) as "Percentage",
+  (select total_countries from total_count) as "Total Countries"
 from
   income_counts
 
@@ -642,7 +645,8 @@ union all
 select
   'Total' as income_group,
   (select sum(num_countries) from income_counts),
-  100.0
+  100.0,
+  (select sum(num_countries) from income_counts)
 
 order by
   case when income_group = 'Total' then 1 else 0 end,
