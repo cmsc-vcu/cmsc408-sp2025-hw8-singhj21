@@ -160,7 +160,7 @@ run_sql_and_return_df(cnx, """
 select
   count(*) as "Number of Countries"
 from
-  wdi_country
+  world_bank_data.wdi_country
 """)
 ```
 
