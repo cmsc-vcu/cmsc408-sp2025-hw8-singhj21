@@ -398,14 +398,13 @@ select
 from
   sp25_singhj21_user.wdi_country
 where
-  `Region` is not null
-  and `Region` <> ''
-  and `Region` <> 'North America'
+  `Region` is not null and `Region` <> ''
 group by
   `Region`
 order by
   `Region`
 """)
+
 
 ```
 
