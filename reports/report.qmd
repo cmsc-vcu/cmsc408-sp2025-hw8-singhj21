@@ -383,17 +383,23 @@ order by
 ## and a column for the row totals.
 ## (skills: select, aggregate, group by, nested query)
 
-run_sql_and_return_html(cnx,"""
+run_sql_and_return_html(cnx, """
 select
   `Region`,
   sum(case when `Income Group` = 'High income' then 1 else 0 end) as "High",
   sum(case when `Income Group` = 'Upper middle income' then 1 else 0 end) as "Upper Middle",
   sum(case when `Income Group` = 'Lower middle income' then 1 else 0 end) as "Lower Middle",
   sum(case when `Income Group` = 'Low income' then 1 else 0 end) as "Low",
-  sum(case when `Income Group` not in ('High income','Upper middle income','Lower middle income','Low income') or `Income Group` is null then 1 else 0 end) as "Other",
-  count(*) as "Total"
+  sum(case when (`Income Group` not in ('High income','Upper middle income','Lower middle income','Low income') or `Income Group` is null) then 1 else 0 end) as "Other",
+  sum(
+    case when `Income Group` in ('High income', 'Upper middle income', 'Lower middle income', 'Low income') 
+    or (`Income Group` not in ('High income','Upper middle income','Lower middle income','Low income') and `Income Group` is not null)
+    then 1 else 0 end
+  ) as "Total"
 from
   sp25_singhj21_user.wdi_country
+where
+  `Region` is not null and `Region` <> ''
 group by
   `Region`
 order by
@@ -630,7 +636,16 @@ select
   round(num_countries * 100.0 / (select total_countries from total_count), 1) as "Percentage"
 from
   income_counts
+
+union all
+
+select
+  'Total' as income_group,
+  (select sum(num_countries) from income_counts),
+  100.0
+
 order by
+  case when income_group = 'Total' then 1 else 0 end,
   "Number of Countries" desc
 """)
 
